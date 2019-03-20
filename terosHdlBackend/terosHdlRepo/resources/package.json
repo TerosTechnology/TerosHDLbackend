@@ -1,0 +1,34 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "Module description.",
+  "keywords": [
+    "vhdl",
+    "dsp",
+    "filter",
+    "window"
+  ],
+  "files": [
+    "doc",
+    ".scripts",
+    "src",
+    "README_integration.md",
+    "build"
+  ],
+  "dependencies": {
+    "coreX": "git+http://xxx.com/gitlab/DEB_PRUEBA.git#v1.0.0",
+    "shelljs":"0.8.2"
+  },
+  "homepage": "http://xxx.com/gitlab/DEB_PRUEBA/blob/master/README.md",
+  "bugs": {
+    "url": "http://xxx.com/gitlab/DEB_PRUEBA/issues"
+  },
+  "src": [
+    "src/core_pkg.vhd",
+    "src/core_top.vhd"
+  ],
+  "scripts": {
+    "postinstall": "node .scripts/copy-files; cp ./doc/README_integration.md README_development.md; rm -R .scripts src doc"
+  },
+  "author": "FPGA"
+}
