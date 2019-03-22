@@ -1,4 +1,5 @@
-# Copyright 2019 Carlos Alberto Ruiz Naranjo, Ismael Pérez Rojo
+# Copyright 2018 DAS Photonics
+# Carlos Alberto Ruiz Naranjo, Ismael Pérez Rojo
 #
 # This file is part of TerosHDL.
 #
