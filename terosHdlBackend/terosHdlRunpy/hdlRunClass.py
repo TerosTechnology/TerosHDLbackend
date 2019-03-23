@@ -127,7 +127,7 @@ class RunPy:
   def setCheckCobertura(self):
     f = open (self.filename, "a")
     cadena =  '\n#Check GHDL backend.\n'
-    cadena += 'code_coverage=0\nif( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n  code_coverage=1\nelse:\n  code_coverage=0\n'
+    cadena += 'code_coverage=False\nif( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n  code_coverage=True\nelse:\n  code_coverage=False\n'
     f.write(cadena)
     f.close()
 
@@ -302,14 +302,14 @@ class RunPy:
     f = open (self.filename, "a")
     cadena  = '\n#GHDL parameters.\n'
 
-    cadena += 'if(code_coverage==1):\n'
+    cadena += 'if(code_coverage==True):\n'
     cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fexplicit","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
     cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fexplicit","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
     cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules","-Wl,-lgcov"])\n'
     if self.complex==True:
       cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
+    # cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
 
     cadena += 'else:\n'
     cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
@@ -318,7 +318,7 @@ class RunPy:
     if self.complex==True:
       cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
+    # cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
     f.write(cadena)
     f.close()
 
@@ -397,7 +397,7 @@ class RunPy:
     f = open (self.filename, "a")
     cadena = '\n#Code coverage.\n'
     cadena += 'if all_ok:\n'
-    cadena += '  if(code_coverage==1):\n'
+    cadena += '  if(code_coverage==True):\n'
     for i in range(0,len(self.src)):
       cadena += '    subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
     cadena += '    subprocess.call(["genhtml"'
