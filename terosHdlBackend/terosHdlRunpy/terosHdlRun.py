@@ -48,6 +48,7 @@ def main():
   parser.add_argument('--xilibIseGhdlPath', nargs='?', default="", help='Xilinx ISE GHDL library path.',required=False)
   parser.add_argument('--xilibVivadoGhdlPath', nargs='?', default="", help='Xilinx Vivado GHDL library path.',required=False)
   parser.add_argument('--xilibVivadoModelsimPath', nargs='?', default="", help='Xilinx Vivado Modelsim library path.',required=False)
+  parser.add_argument('--coverageReport', nargs='?', default="html", help='Folder to save code coverage report. Default: html',required=False)
   args = parser.parse_args()
 
   #Variable para la ruta al directorio
@@ -67,6 +68,7 @@ def main():
   xilibIseGhdlPath        = args.xilibIseGhdlPath
   xilibVivadoGhdlPath     = args.xilibVivadoGhdlPath
   xilibVivadoModelsimPath = args.xilibVivadoModelsimPath
+  coverageReport          = args.coverageReport
 
   #Lista vacia para incluir los ficheros
   lstFilesSrc = []
@@ -84,7 +86,7 @@ def main():
       fileStr = nombreFichero+extension
       lstFilesTb.append(fileStr)
 
-  runPy = hdlRunClass.RunPy(outPath+"/"+filename ,name,lstFilesSrc,lstFilesTb,complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath)
+  runPy = hdlRunClass.RunPy(outPath+"/"+filename ,name,lstFilesSrc,lstFilesTb,complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport)
   runPy.generate()
 
 if __name__ == '__main__':

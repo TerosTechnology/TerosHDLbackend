@@ -26,7 +26,7 @@ import sys
 import os.path
 
 class RunPy:
-  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath):
+  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
     self.name     = name
     self.filename = filename
     self.src      = src
@@ -43,6 +43,7 @@ class RunPy:
     self.xilibIseGhdlPath        = xilibIseGhdlPath
     self.xilibVivadoGhdlPath     = xilibVivadoGhdlPath
     self.xilibVivadoModelsimPath = xilibVivadoModelsimPath
+    self.coverageReport          = coverageReport
 
 
   def generate(self):
@@ -402,7 +403,7 @@ class RunPy:
     cadena += '    subprocess.call(["genhtml"'
     for i in range(0,len(self.src)):
       cadena += ',"code_' + str(i)+ '.info"'
-    cadena += ',"--output-directory", "html"])\n'
+    cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
     cadena += '  else:\n'
     cadena += '    print("OK")\n'
     cadena += '    exit(0)\n'
