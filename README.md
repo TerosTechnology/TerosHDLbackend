@@ -48,6 +48,8 @@ usage: hdlRun [-h] [--outPath [OUTPATH]] --src [SRC [SRC ...]] --tb
               [--xilibIseGhdlPath [XILIBISEGHDLPATH]]
               [--xilibVivadoGhdlPath [XILIBVIVADOGHDLPATH]]
               [--xilibVivadoModelsimPath [XILIBVIVADOMODELSIMPATH]]
+              [--coverageReport [COVERAGEREPORT]]
+
 
 Automated creation of VUnit run.py
 
@@ -79,11 +81,13 @@ optional arguments:
                         Xilinx Vivado GHDL library path.
   --xilibVivadoModelsimPath [XILIBVIVADOMODELSIMPATH]
                         Xilinx Vivado Modelsim library path.
+  --coverageReport [COVERAGEREPORT]
+                        Folder to save code coverage report. Default: html
 ```
 
 ## Upload to pip
 
 ```
 python setup.py sdist
-twine upload dist/teroshdlbackend-1.0.3.tar.gz
+twine upload dist/dist/TerosHDL.tar.gz
 ```
