@@ -26,7 +26,7 @@ import sys
 import os.path
 
 class RunPy:
-  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
+  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,xilib,pslSupport,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
     self.name     = name
     self.filename = filename
     self.src      = src
@@ -39,6 +39,7 @@ class RunPy:
     self.poscheck = poscheck
     self.disableIeeeWarnings     = disableIeeeWarnings
     self.synopsysLibraries       = synopsysLibraries
+    self.pslSupport              = pslSupport
     self.xilib                   = xilib
     self.uvvmGhdlPath            = uvvmGhdlPath
     self.uvvmModelsimPath        = uvvmModelsimPath
@@ -302,33 +303,36 @@ class RunPy:
 
   def setParametrosGHDL(self):
     f = open (self.filename, "a")
-    cadena  = '\n#GHDL parameters.\n'
-
-    cadena += 'if(code_coverage==True):\n'
-    if self.synopsysLibraries==True:
-      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
-      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
-      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules","-Wl,-lgcov"])\n'
+    if self.pslSupport==True:
+      psl_var=',"-fpsl"'
     else:
-      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fprofile-arcs","-ftest-coverage"])\n'
-      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fprofile-arcs","-ftest-coverage"])\n'
-      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-Wl,-lgcov"])\n'
-    if self.complex==True:
-      cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
+      psl_var=' '
+    if self.synopsysLibraries==True:
+      synopsys_var='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'
+      synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
+    else:
+      synopsys_var=' '
+      synopsys_var_opt=' '
+    cadena  = '\n#GHDL parameters.\n'
+    cadena += 'if(code_coverage==True):\n'
+    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+',"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+',"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+',"-Wl,-lgcov",'+psl_var+'])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    if self.disableIeeeWarnings==True:
-      cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
 
     cadena += 'else:\n'
-    if self.synopsysLibraries==True:
-      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"])\n'
-      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"])\n'
+    if self.synopsysLibraries==True or self.pslSupport==True:
+      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'+psl_var+'])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'+psl_var+'])\n'
       cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
+    cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n\n'
+
     if self.complex==True:
-      cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
-    cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
+      cadena += 'ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
     if self.disableIeeeWarnings==True:
-      cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
+      cadena += 'ui.set_sim_option("disable_ieee_warnings", True)\n'
+    if self.pslSupport==True:
+      cadena += 'ui.set_sim_option("ghdl.sim_flags", ["--psl-report=./psl_coverage.json"])\n'
     f.write(cadena)
     f.close()
 
