@@ -1,4 +1,4 @@
-# Copyright 2018
+# Copyright 2019
 #
 # Ismael Pérez Rojo (ismaelprojo@gmail.com)
 # Carlos Alberto Ruiz Naranjo (carlosruiznaranjo@gmail.com)
@@ -42,6 +42,8 @@ def main():
   parser.add_argument('--uvvm', nargs='?', const=True, default=False, help='Add UVVM libraries.',required=False)
   parser.add_argument('--precheck', nargs='?', const=True, default=False, help='Add precheck.',required=False)
   parser.add_argument('--poscheck', nargs='?', const=True, default=False, help='Add poscheck.',required=False)
+  parser.add_argument('--disableIeeeWarnings', nargs='?', const=True, default=False, help='Disable IEEE warnings.',required=False)
+  parser.add_argument('--synopsysLibraries', nargs='?', const=True, default=False, help='Add support for synopsys libraries.',required=False)
   parser.add_argument('--xilib', nargs='?', const=True, default=False, help='Add Xilinx libraries.',required=False)
   parser.add_argument('--uvvmGhdlPath', nargs='?', default="", help='UVVM ghdl library path.',required=False)
   parser.add_argument('--uvvmModelsimPath', nargs='?', default="", help='UVVM Modelsim library path.',required=False)
@@ -62,7 +64,9 @@ def main():
   uvvm        = args.uvvm
   precheck    = args.precheck
   poscheck    = args.poscheck
-  xilib       = args.xilib
+  disableIeeeWarnings     = args.disableIeeeWarnings
+  synopsysLibraries       = args.synopsysLibraries
+  xilib                   = args.xilib
   uvvmGhdlPath            = args.uvvmGhdlPath
   uvvmModelsimPath        = args.uvvmModelsimPath
   xilibIseGhdlPath        = args.xilibIseGhdlPath
@@ -86,7 +90,7 @@ def main():
       fileStr = nombreFichero+extension
       lstFilesTb.append(fileStr)
 
-  runPy = hdlRunClass.RunPy(outPath+"/"+filename ,name,lstFilesSrc,lstFilesTb,complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport)
+  runPy = hdlRunClass.RunPy(outPath+"/"+filename ,name,lstFilesSrc,lstFilesTb,complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport)
   runPy.generate()
 
 if __name__ == '__main__':

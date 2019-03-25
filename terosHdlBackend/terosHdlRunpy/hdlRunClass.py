@@ -26,7 +26,7 @@ import sys
 import os.path
 
 class RunPy:
-  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
+  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
     self.name     = name
     self.filename = filename
     self.src      = src
@@ -37,7 +37,9 @@ class RunPy:
     self.uvvm     = uvvm
     self.precheck = precheck
     self.poscheck = poscheck
-    self.xilib    = xilib
+    self.disableIeeeWarnings     = disableIeeeWarnings
+    self.synopsysLibraries       = synopsysLibraries
+    self.xilib                   = xilib
     self.uvvmGhdlPath            = uvvmGhdlPath
     self.uvvmModelsimPath        = uvvmModelsimPath
     self.xilibIseGhdlPath        = xilibIseGhdlPath
@@ -303,22 +305,30 @@ class RunPy:
     cadena  = '\n#GHDL parameters.\n'
 
     cadena += 'if(code_coverage==True):\n'
-    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fexplicit","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
-    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fexplicit","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
-    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules","-Wl,-lgcov"])\n'
+    if self.synopsysLibraries==True:
+      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
+      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules","-Wl,-lgcov"])\n'
+    else:
+      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fprofile-arcs","-ftest-coverage"])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fprofile-arcs","-ftest-coverage"])\n'
+      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-Wl,-lgcov"])\n'
     if self.complex==True:
       cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    # cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
+    if self.disableIeeeWarnings==True:
+      cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
 
     cadena += 'else:\n'
-    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
-    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
-    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
+    if self.synopsysLibraries==True:
+      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"])\n'
+      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
     if self.complex==True:
       cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    # cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
+    if self.disableIeeeWarnings==True:
+      cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
     f.write(cadena)
     f.close()
 
