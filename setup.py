@@ -23,7 +23,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='TerosHDL',
-    version='0.0.5',
+    version='0.0.6',
     author='Ismael Perez Rojo, Carlos Alberto Ruiz Naranjo',
     author_email='ismaelprojo@gmail.com, carlosruiznaranjo@gmail.com',
     description=('Teros HDL backend.'),

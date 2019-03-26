@@ -44,8 +44,8 @@ def main():
   parser.add_argument('--poscheck', nargs='?', const=True, default=False, help='Add poscheck.',required=False)
   parser.add_argument('--disableIeeeWarnings', nargs='?', const=True, default=False, help='Disable IEEE warnings.',required=False)
   parser.add_argument('--synopsysLibraries', nargs='?', const=True, default=False, help='Add support for synopsys libraries.',required=False)
-  parser.add_argument('--pslSupport', nargs='?', const=True, default=False, help='Add support for PSL.',required=False)
   parser.add_argument('--xilib', nargs='?', const=True, default=False, help='Add Xilinx libraries.',required=False)
+  parser.add_argument('--pslSupport', nargs='?', const=True, default=False, help='Add support for PSL.',required=False)
   parser.add_argument('--uvvmGhdlPath', nargs='?', default="", help='UVVM ghdl library path.',required=False)
   parser.add_argument('--uvvmModelsimPath', nargs='?', default="", help='UVVM Modelsim library path.',required=False)
   parser.add_argument('--xilibIseGhdlPath', nargs='?', default="", help='Xilinx ISE GHDL library path.',required=False)
@@ -67,8 +67,8 @@ def main():
   poscheck    = args.poscheck
   disableIeeeWarnings     = args.disableIeeeWarnings
   synopsysLibraries       = args.synopsysLibraries
-  pslSupport              = args.pslSupport
   xilib                   = args.xilib
+  pslSupport              = args.pslSupport
   uvvmGhdlPath            = args.uvvmGhdlPath
   uvvmModelsimPath        = args.uvvmModelsimPath
   xilibIseGhdlPath        = args.xilibIseGhdlPath
@@ -92,7 +92,7 @@ def main():
       fileStr = nombreFichero+extension
       lstFilesTb.append(fileStr)
 
-  runPy = hdlRunClass.RunPy(outPath+"/"+filename ,name,lstFilesSrc,lstFilesTb,complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,pslSupport,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport)
+  runPy = hdlRunClass.RunPy(outPath+"/"+filename ,name,lstFilesSrc,lstFilesTb,complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,xilib,pslSupport,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport)
   runPy.generate()
 
 if __name__ == '__main__':

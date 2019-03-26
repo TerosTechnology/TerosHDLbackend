@@ -39,8 +39,8 @@ class RunPy:
     self.poscheck = poscheck
     self.disableIeeeWarnings     = disableIeeeWarnings
     self.synopsysLibraries       = synopsysLibraries
-    self.pslSupport              = pslSupport
     self.xilib                   = xilib
+    self.pslSupport              = pslSupport
     self.uvvmGhdlPath            = uvvmGhdlPath
     self.uvvmModelsimPath        = uvvmModelsimPath
     self.xilibIseGhdlPath        = xilibIseGhdlPath
@@ -308,16 +308,16 @@ class RunPy:
     else:
       psl_var=' '
     if self.synopsysLibraries==True:
-      synopsys_var='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'
+      synopsys_var='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules",'
       synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
     else:
       synopsys_var=' '
       synopsys_var_opt=' '
     cadena  = '\n#GHDL parameters.\n'
     cadena += 'if(code_coverage==True):\n'
-    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+',"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
-    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+',"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
-    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+',"-Wl,-lgcov",'+psl_var+'])\n'
+    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+'"-Wl,-lgcov"'+psl_var+'])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
 
     cadena += 'else:\n'
