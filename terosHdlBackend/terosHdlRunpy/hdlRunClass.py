@@ -269,16 +269,16 @@ class RunPy:
   def setSrc(self):
     f = open (self.filename, "a")
     cadena  = '\n#Add module sources.\n'
-    cadena += self.name + '_lib = ui.add_library("' + self.name + '_lib")\n'
+    cadena += self.name + '_src_lib = ui.add_library("src_lib")\n'
     for i in range(0,len(self.src)):
-      cadena += self.name + '_lib.add_source_files("' + self.src[i] + '")' + '\n'
+      cadena += self.name + '_src_lib.add_source_files("' + self.src[i] + '")' + '\n'
     f.write(cadena)
     f.close()
 
   def setTb(self):
     f = open (self.filename, "a")
     cadena  = '\n#Add tb sources.\n'
-    cadena += self.name + '_tb_lib = ui.add_library("' + self.name + '_tb_lib")\n'
+    cadena += self.name + '_tb_lib = ui.add_library("tb_lib")\n'
     for i in range(0,len(self.tb)):
       cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i] + '")' + '\n'
     f.write(cadena)
@@ -311,7 +311,7 @@ class RunPy:
       synopsys_var='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules",'
       synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
     else:
-      synopsys_var=' '
+      synopsys_var='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
       synopsys_var_opt=' '
     cadena  = '\n#GHDL parameters.\n'
     cadena += 'if(code_coverage==True):\n'
@@ -322,8 +322,8 @@ class RunPy:
 
     cadena += 'else:\n'
     if self.synopsysLibraries==True or self.pslSupport==True:
-      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'+psl_var+'])\n'
-      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ["-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'+psl_var+'])\n'
+      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ['+synopsys_var+''+psl_var+'])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ['+synopsys_var+''+psl_var+'])\n'
       cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n\n'
 
@@ -339,7 +339,7 @@ class RunPy:
   def setAsociacionChecks(self):
     f = open (self.filename, "a")
     cadena  = '\n#func relations\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  print(test.name)\n'
 
@@ -355,7 +355,7 @@ class RunPy:
   def setAsocPreCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func precheck\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
@@ -370,7 +370,7 @@ class RunPy:
   def setAsocPosCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func poscheck\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
@@ -385,7 +385,7 @@ class RunPy:
   def setAsocPrePosCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func checks\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
