@@ -309,21 +309,21 @@ class RunPy:
       psl_var=' '
     if self.synopsysLibraries==True:
       synopsys_var='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules",'
-      synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
+      synopsys_var_opt='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'
     else:
-      synopsys_var='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
-      synopsys_var_opt=' '
+      synopsys_var=' '
+      synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
     cadena  = '\n#GHDL parameters.\n'
     cadena += 'if(code_coverage==True):\n'
-    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
     cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
     cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+'"-Wl,-lgcov"'+psl_var+'])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
 
     cadena += 'else:\n'
     if self.synopsysLibraries==True or self.pslSupport==True:
-      cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ['+synopsys_var+''+psl_var+'])\n'
-      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ['+synopsys_var+''+psl_var+'])\n'
+      cadena += '  ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
       cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n\n'
 
@@ -356,14 +356,14 @@ class RunPy:
     f = open (self.filename, "a")
     cadena  = '\n#func precheck\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    # cadena += 'for test in tb_generated.get_tests():\n'
+    # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
-    cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(pre_config=make_pre_check())\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    # cadena += '  if test.name == "'+self.name+'_test":\n'
+    # cadena += '    for i in range (0,num_test):\n'
+    cadena += '  test.add_config(pre_config=make_pre_check())\n'
+    # cadena += '  else:\n'
+    # cadena += '    pass\n'
     f.write(cadena)
     f.close()
 
@@ -371,14 +371,14 @@ class RunPy:
     f = open (self.filename, "a")
     cadena  = '\n#func poscheck\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    # cadena += 'for test in tb_generated.get_tests():\n'
+    # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
-    cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(post_check=make_post_check())\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    # cadena += '  if test.name == "'+self.name+'_test":\n'
+    # cadena += '    for i in range (0,num_test):\n'
+    cadena += '  test.add_config(post_check=make_post_check())\n'
+    # cadena += '  else:\n'
+    # cadena += '    pass\n'
     f.write(cadena)
     f.close()
 
@@ -386,14 +386,14 @@ class RunPy:
     f = open (self.filename, "a")
     cadena  = '\n#func checks\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    # cadena += 'for test in tb_generated.get_tests():\n'
+    # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
-    cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(pre_config=make_pre_check(),post_check=make_post_check())\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    # cadena += '  if test.name == "'+self.name+'_test":\n'
+    # cadena += '    for i in range (0,num_test):\n'
+    cadena += '  test.add_config(pre_config=make_pre_check(),post_check=make_post_check())\n'
+    # cadena += '  else:\n'
+    # cadena += '    pass\n'
     f.write(cadena)
     f.close()
 
