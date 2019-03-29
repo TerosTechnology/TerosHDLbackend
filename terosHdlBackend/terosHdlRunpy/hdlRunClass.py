@@ -159,7 +159,7 @@ class RunPy:
     cadena += '  After test.                    \n'
     cadena += '  """                            \n'
     cadena += '  def post_check(output_path):   \n'
-    cadena += '    #Check                       \n'
+    cadena += '    check = True                 \n'
     cadena += '    return check                 \n'
     cadena += '  return post_check              \n'
     f.write(cadena)
@@ -339,12 +339,13 @@ class RunPy:
   def setAsociacionChecks(self):
     f = open (self.filename, "a")
     cadena  = '\n#func relations\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  print(test.name)\n'
 
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  if test.name == "'+self.name+'_test":\n'
+    cadena += '    num_test = 5 \n'
     cadena += '    for i in range (0,num_test):\n'
     cadena += '      test.add_config(name="'+self.name+'_"+str(i), generics=dict(num_test=i,parameter_generic=parameter),pre_config=make_pre_check(i,parameter),post_check=make_post_check(i))\n'
     cadena += '  else:\n'
@@ -355,13 +356,13 @@ class RunPy:
   def setAsocPreCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func precheck\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     # cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  if test.name == "'+self.name+'_test":\n'
     # cadena += '    for i in range (0,num_test):\n'
-    cadena += '  test.add_config(pre_config=make_pre_check())\n'
+    cadena += '  test.add_config(name="'+self.name+'", pre_config=make_pre_check())\n'
     # cadena += '  else:\n'
     # cadena += '    pass\n'
     f.write(cadena)
@@ -370,13 +371,13 @@ class RunPy:
   def setAsocPosCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func poscheck\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     # cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  if test.name == "'+self.name+'_test":\n'
     # cadena += '    for i in range (0,num_test):\n'
-    cadena += '  test.add_config(post_check=make_post_check())\n'
+    cadena += '  test.add_config(name="'+self.name+'", post_check=make_post_check())\n'
     # cadena += '  else:\n'
     # cadena += '    pass\n'
     f.write(cadena)
@@ -385,13 +386,13 @@ class RunPy:
   def setAsocPrePosCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func checks\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0]+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     # cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  if test.name == "'+self.name+'_test":\n'
     # cadena += '    for i in range (0,num_test):\n'
-    cadena += '  test.add_config(pre_config=make_pre_check(),post_check=make_post_check())\n'
+    cadena += '  test.add_config(name="'+self.name+'", pre_config=make_pre_check(),post_check=make_post_check())\n'
     # cadena += '  else:\n'
     # cadena += '    pass\n'
     f.write(cadena)
@@ -419,7 +420,6 @@ class RunPy:
       cadena += ',"code_' + str(i)+ '.info"'
     cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
     cadena += '  else:\n'
-    cadena += '    print("OK")\n'
     cadena += '    exit(0)\n'
     cadena += 'else:\n'
     cadena += '  exit(1)\n'
