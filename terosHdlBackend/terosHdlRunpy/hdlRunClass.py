@@ -26,7 +26,7 @@ import sys
 import os.path
 
 class RunPy:
-  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,xilib,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
+  def __init__(self, filename, name, src, tb, complex,outPath,lang,uvvm,precheck,poscheck,disableIeeeWarnings,synopsysLibraries,xilib,pslSupport,uvvmGhdlPath,uvvmModelsimPath,xilibIseGhdlPath,xilibVivadoGhdlPath,xilibVivadoModelsimPath,coverageReport):
     self.name     = name
     self.filename = filename
     self.src      = src
@@ -37,7 +37,10 @@ class RunPy:
     self.uvvm     = uvvm
     self.precheck = precheck
     self.poscheck = poscheck
-    self.xilib    = xilib
+    self.disableIeeeWarnings     = disableIeeeWarnings
+    self.synopsysLibraries       = synopsysLibraries
+    self.xilib                   = xilib
+    self.pslSupport              = pslSupport
     self.uvvmGhdlPath            = uvvmGhdlPath
     self.uvvmModelsimPath        = uvvmModelsimPath
     self.xilibIseGhdlPath        = xilibIseGhdlPath
@@ -156,7 +159,7 @@ class RunPy:
     cadena += '  After test.                    \n'
     cadena += '  """                            \n'
     cadena += '  def post_check(output_path):   \n'
-    cadena += '    #Check                       \n'
+    cadena += '    check = True                 \n'
     cadena += '    return check                 \n'
     cadena += '  return post_check              \n'
     f.write(cadena)
@@ -266,16 +269,16 @@ class RunPy:
   def setSrc(self):
     f = open (self.filename, "a")
     cadena  = '\n#Add module sources.\n'
-    cadena += self.name + '_lib = ui.add_library("' + self.name + '_lib")\n'
+    cadena += self.name + '_src_lib = ui.add_library("src_lib")\n'
     for i in range(0,len(self.src)):
-      cadena += self.name + '_lib.add_source_files("' + self.src[i] + '")' + '\n'
+      cadena += self.name + '_src_lib.add_source_files("' + self.src[i] + '")' + '\n'
     f.write(cadena)
     f.close()
 
   def setTb(self):
     f = open (self.filename, "a")
     cadena  = '\n#Add tb sources.\n'
-    cadena += self.name + '_tb_lib = ui.add_library("' + self.name + '_tb_lib")\n'
+    cadena += self.name + '_tb_lib = ui.add_library("tb_lib")\n'
     for i in range(0,len(self.tb)):
       cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i] + '")' + '\n'
     f.write(cadena)
@@ -300,37 +303,49 @@ class RunPy:
 
   def setParametrosGHDL(self):
     f = open (self.filename, "a")
+    if self.pslSupport==True:
+      psl_var=',"-fpsl"'
+    else:
+      psl_var=' '
+    if self.synopsysLibraries==True:
+      synopsys_var='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules",'
+      synopsys_var_opt='"-fexplicit","--ieee=synopsys","--no-vital-checks","-frelaxed-rules"'
+    else:
+      synopsys_var=' '
+      synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
     cadena  = '\n#GHDL parameters.\n'
-
     cadena += 'if(code_coverage==True):\n'
-    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , [ "-fexplicit","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
-    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ "-fexplicit","--no-vital-checks","-frelaxed-rules","-fprofile-arcs","-ftest-coverage"])\n'
-    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules","-Wl,-lgcov"])\n'
-    if self.complex==True:
-      cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
+    cadena += '  ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+'"-Wl,-lgcov"'+psl_var+'])\n'
     cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    # cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
 
     cadena += 'else:\n'
-    cadena += '  ' + self.name + '_lib.add_compile_option   ("ghdl.flags"     , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
-    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
-    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
+    if self.synopsysLibraries==True or self.pslSupport==True:
+      cadena += '  ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
+      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
+      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
+    cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n\n'
+
     if self.complex==True:
-      cadena += '  ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
-    cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
-    # cadena += '  ui.set_sim_option("disable_ieee_warnings", True)\n'
+      cadena += 'ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
+    if self.disableIeeeWarnings==True:
+      cadena += 'ui.set_sim_option("disable_ieee_warnings", True)\n'
+    if self.pslSupport==True:
+      cadena += 'ui.set_sim_option("ghdl.sim_flags", ["--psl-report=./psl_coverage.json"])\n'
     f.write(cadena)
     f.close()
 
   def setAsociacionChecks(self):
     f = open (self.filename, "a")
     cadena  = '\n#func relations\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  print(test.name)\n'
 
     cadena += 'for test in tb_generated.get_tests():\n'
     cadena += '  if test.name == "'+self.name+'_test":\n'
+    cadena += '    num_test = 5 \n'
     cadena += '    for i in range (0,num_test):\n'
     cadena += '      test.add_config(name="'+self.name+'_"+str(i), generics=dict(num_test=i,parameter_generic=parameter),pre_config=make_pre_check(i,parameter),post_check=make_post_check(i))\n'
     cadena += '  else:\n'
@@ -341,45 +356,45 @@ class RunPy:
   def setAsocPreCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func precheck\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
+    # cadena += 'for test in tb_generated.get_tests():\n'
+    # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
-    cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(pre_config=make_pre_check())\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    # cadena += '  if test.name == "'+self.name+'_test":\n'
+    # cadena += '    for i in range (0,num_test):\n'
+    cadena += '  test.add_config(name="'+self.name+'", pre_config=make_pre_check())\n'
+    # cadena += '  else:\n'
+    # cadena += '    pass\n'
     f.write(cadena)
     f.close()
 
   def setAsocPosCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func poscheck\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
+    # cadena += 'for test in tb_generated.get_tests():\n'
+    # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
-    cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(post_check=make_post_check())\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    # cadena += '  if test.name == "'+self.name+'_test":\n'
+    # cadena += '    for i in range (0,num_test):\n'
+    cadena += '  test.add_config(name="'+self.name+'", post_check=make_post_check())\n'
+    # cadena += '  else:\n'
+    # cadena += '    pass\n'
     f.write(cadena)
     f.close()
 
   def setAsocPrePosCheck(self):
     f = open (self.filename, "a")
     cadena  = '\n#func checks\n'
-    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.name+'_tb")\n'
+    cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
+    # cadena += 'for test in tb_generated.get_tests():\n'
+    # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
-    cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(pre_config=make_pre_check(),post_check=make_post_check())\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    # cadena += '  if test.name == "'+self.name+'_test":\n'
+    # cadena += '    for i in range (0,num_test):\n'
+    cadena += '  test.add_config(name="'+self.name+'", pre_config=make_pre_check(),post_check=make_post_check())\n'
+    # cadena += '  else:\n'
+    # cadena += '    pass\n'
     f.write(cadena)
     f.close()
 
@@ -405,7 +420,6 @@ class RunPy:
       cadena += ',"code_' + str(i)+ '.info"'
     cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
     cadena += '  else:\n'
-    cadena += '    print("OK")\n'
     cadena += '    exit(0)\n'
     cadena += 'else:\n'
     cadena += '  exit(1)\n'
