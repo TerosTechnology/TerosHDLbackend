@@ -1,3 +1,5 @@
+![logo](./terosHdlBackend/terosHdlRepo/resources/doc/logo.png)
+
 # TerosHDLbackend
 
 Tools to accelerate the FPGA development.
