@@ -1,4 +1,4 @@
-![logo](./terosHdlBackend/terosHdlRepo/resources/doc/logo.png)
+<img src="./doc/images/teros_logo.svg" align="right" width=30% height=30%>
 
 # TerosHDLbackend
 
