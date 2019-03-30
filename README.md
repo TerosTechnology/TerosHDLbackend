@@ -7,7 +7,7 @@ Tools to accelerate the FPGA development.
 ## Install from pip
 
 ```
-sudo pip install TerosHDL
+pip install TerosHDL
 ```
 
 ## Install from source code
@@ -15,7 +15,7 @@ sudo pip install TerosHDL
 ```
 git clone
 cd /terosHDLbackend
-sudo pip install .
+pip install .
 ```
 
 ## Tools
