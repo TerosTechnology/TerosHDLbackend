@@ -206,6 +206,7 @@ class RunPy:
     f = open (self.filename, "a")
     cadena  = '\n#Add Xilinx ISE libraries.                                       \n'
     cadena += 'if(ide=="ise"):                                                             \n'
+    cadena += '  print("IDE ISE selected")                                          \n'
     cadena += '  xilinx_libraries_path = "'+self.xilibIseGhdlPath+'"             \n'
     cadena += '  unisim_path   = join(xilinx_libraries_path,"unisim","v08")                \n'
     cadena += '  corelib_path  = join(xilinx_libraries_path,"xilinxcorelib","v08")         \n'
@@ -216,7 +217,7 @@ class RunPy:
     cadena += '                                                                            \n'
     cadena += '#Xilinx Vivado libraries.                                      \n'
     cadena += 'if(ide=="vivado"):                                                          \n'
-    cadena += '  print("IDE Vivado doesnt selected")                                          \n'
+    cadena += '  print("IDE Vivado selected")                                          \n'
     cadena += '  if(simname=="modelsim" or simname=="MODELSIM"):\n'
     cadena += '    xilinx_libraries_path="'+self.xilibVivadoModelsimPath+'"\n'
     cadena += '    unisim_path   = join(xilinx_libraries_path,"unisim")\n'
