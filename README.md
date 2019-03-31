@@ -2,7 +2,7 @@
 
 # TerosHDLbackend
 
-Tools to accelerate the FPGA development.
+Tools to accelerate the FPGA development. Backend of TerosHDL IDE.
 
 ## Install from pip
 
