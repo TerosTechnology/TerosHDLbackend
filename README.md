@@ -1,13 +1,13 @@
-![logo](./terosHdlBackend/terosHdlRepo/resources/doc/logo.png)
+<img src="./doc/images/teros_logo.svg" align="right" width=30% height=30%>
 
 # TerosHDLbackend
 
-Tools to accelerate the FPGA development.
+Tools to accelerate the FPGA development. Backend of TerosHDL IDE.
 
 ## Install from pip
 
 ```
-sudo pip install TerosHDL
+pip install TerosHDL
 ```
 
 ## Install from source code
@@ -15,7 +15,7 @@ sudo pip install TerosHDL
 ```
 git clone
 cd /terosHDLbackend
-sudo pip install .
+pip install .
 ```
 
 ## Tools
@@ -41,17 +41,20 @@ optional arguments:
 Automated creation of VUnit run.py
 
 ```
-usage: hdlRun [-h] [--outPath [OUTPATH]] --src [SRC [SRC ...]] --tb
-              [TB [TB ...]] --name NAME [--filename [FILENAME]]
-              [--lang [{vhdl,verilog}]] [--complex [COMPLEX]] [--uvvm [UVVM]]
-              [--precheck [PRECHECK]] [--poscheck [POSCHECK]]
-              [--xilib [XILIB]] [--uvvmGhdlPath [UVVMGHDLPATH]]
-              [--uvvmModelsimPath [UVVMMODELSIMPATH]]
-              [--xilibIseGhdlPath [XILIBISEGHDLPATH]]
-              [--xilibVivadoGhdlPath [XILIBVIVADOGHDLPATH]]
-              [--xilibVivadoModelsimPath [XILIBVIVADOMODELSIMPATH]]
-              [--coverageReport [COVERAGEREPORT]]
-
+usage: terosHdlRunpy [-h] [--outPath [OUTPATH]] --src [SRC [SRC ...]] --tb
+                     [TB [TB ...]] --name NAME [--filename [FILENAME]]
+                     [--lang [{vhdl,verilog}]] [--complex [COMPLEX]]
+                     [--uvvm [UVVM]] [--precheck [PRECHECK]]
+                     [--poscheck [POSCHECK]]
+                     [--disableIeeeWarnings [DISABLEIEEEWARNINGS]]
+                     [--synopsysLibraries [SYNOPSYSLIBRARIES]]
+                     [--xilib [XILIB]] [--pslSupport [PSLSUPPORT]]
+                     [--uvvmGhdlPath [UVVMGHDLPATH]]
+                     [--uvvmModelsimPath [UVVMMODELSIMPATH]]
+                     [--xilibIseGhdlPath [XILIBISEGHDLPATH]]
+                     [--xilibVivadoGhdlPath [XILIBVIVADOGHDLPATH]]
+                     [--xilibVivadoModelsimPath [XILIBVIVADOMODELSIMPATH]]
+                     [--coverageReport [COVERAGEREPORT]]
 
 Automated creation of VUnit run.py
 
@@ -72,7 +75,13 @@ optional arguments:
                         Add precheck.
   --poscheck [POSCHECK]
                         Add poscheck.
+  --disableIeeeWarnings [DISABLEIEEEWARNINGS]
+                        Disable IEEE warnings.
+  --synopsysLibraries [SYNOPSYSLIBRARIES]
+                        Add support for synopsys libraries.
   --xilib [XILIB]       Add Xilinx libraries.
+  --pslSupport [PSLSUPPORT]
+                        Add support for PSL.
   --uvvmGhdlPath [UVVMGHDLPATH]
                         UVVM ghdl library path.
   --uvvmModelsimPath [UVVMMODELSIMPATH]
