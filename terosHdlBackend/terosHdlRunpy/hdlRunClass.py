@@ -130,17 +130,17 @@ class RunPy:
   def setCheckCobertura(self):
     f = open (self.filename, "a")
     cadena =  '\n#Check GHDL backend.\n'
-    cadena += 'code_coverage=False\nif( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n  code_coverage=True\nelse:\n  code_coverage=False\n'
+    cadena += 'code_coverage=False\ntry:\n  if( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n    code_coverage=True\n  else:\n    code_coverage=False\nexcept:\n  print("")\n'
     f.write(cadena)
     f.close()
 
   def setCheckSimulador(self):
     f = open (self.filename, "a")
     cadena =  '\n#Check simulator.\n'
-    cadena += 'print "============================================="\n'
+    cadena += 'print ("=============================================")\n'
     cadena += 'simulator_class = SIMULATOR_FACTORY.select_simulator()\nsimname = simulator_class.name\nprint simname\n'
     cadena += 'if (simname == "modelsim"):\n  f= open("modelsim.do","w+")\n  f.write("add wave * \\nlog -r /*\\nvcd file\\nvcd add -r /*\\n")\n  f.close()\n'
-    cadena += 'print "============================================="\n'
+    cadena += 'print ("=============================================")\n'
     f.write(cadena)
     f.close()
 

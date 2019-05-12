@@ -26,6 +26,7 @@ import sys
 from argparse import ArgumentParser
 import os.path
 import git
+sys.path.append(os.path.dirname(__file__))
 import hdlRepoClass
 
 def main():

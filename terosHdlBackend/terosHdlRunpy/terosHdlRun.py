@@ -27,6 +27,7 @@ import subprocess
 import sys
 from argparse import ArgumentParser
 import os.path
+sys.path.append(os.path.dirname(__file__))
 import hdlRunClass
 
 def main():
