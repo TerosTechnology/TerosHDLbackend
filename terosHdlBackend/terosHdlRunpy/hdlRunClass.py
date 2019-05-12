@@ -272,7 +272,7 @@ class RunPy:
     cadena  = '\n#Add module sources.\n'
     cadena += self.name + '_src_lib = ui.add_library("src_lib")\n'
     for i in range(0,len(self.src)):
-      cadena += self.name + '_src_lib.add_source_files("' + self.src[i] + '")' + '\n'
+      cadena += self.name + '_src_lib.add_source_files("' + self.src[i].replace("\\", "\\\\") + '")' + '\n'
     f.write(cadena)
     f.close()
 
@@ -281,7 +281,7 @@ class RunPy:
     cadena  = '\n#Add tb sources.\n'
     cadena += self.name + '_tb_lib = ui.add_library("tb_lib")\n'
     for i in range(0,len(self.tb)):
-      cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i] + '")' + '\n'
+      cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i].replace("\\", "\\\\") + '")' + '\n'
     f.write(cadena)
     f.close()
 
