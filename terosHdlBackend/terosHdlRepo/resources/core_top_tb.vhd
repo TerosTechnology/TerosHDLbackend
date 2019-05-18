@@ -16,8 +16,8 @@ use ieee.numeric_std.all;
 library std;
 use std.textio.all;
 --
-library core_lib;
-use core_lib.core_top_pkg.all;
+library src_lib;
+use src_lib.core_top_pkg.all;
 
 -- vunit
 library vunit_lib;
