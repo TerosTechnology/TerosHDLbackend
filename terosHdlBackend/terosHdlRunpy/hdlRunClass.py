@@ -130,17 +130,17 @@ class RunPy:
   def setCheckCobertura(self):
     f = open (self.filename, "a")
     cadena =  '\n#Check GHDL backend.\n'
-    cadena += 'code_coverage=False\nif( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n  code_coverage=True\nelse:\n  code_coverage=False\n'
+    cadena += 'code_coverage=False\ntry:\n  if( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n    code_coverage=True\n  else:\n    code_coverage=False\nexcept:\n  print("")\n'
     f.write(cadena)
     f.close()
 
   def setCheckSimulador(self):
     f = open (self.filename, "a")
     cadena =  '\n#Check simulator.\n'
-    cadena += 'print "============================================="\n'
+    cadena += 'print ("=============================================")\n'
     cadena += 'simulator_class = SIMULATOR_FACTORY.select_simulator()\nsimname = simulator_class.name\nprint simname\n'
     cadena += 'if (simname == "modelsim"):\n  f= open("modelsim.do","w+")\n  f.write("add wave * \\nlog -r /*\\nvcd file\\nvcd add -r /*\\n")\n  f.close()\n'
-    cadena += 'print "============================================="\n'
+    cadena += 'print ("=============================================")\n'
     f.write(cadena)
     f.close()
 
@@ -272,7 +272,7 @@ class RunPy:
     cadena  = '\n#Add module sources.\n'
     cadena += self.name + '_src_lib = ui.add_library("src_lib")\n'
     for i in range(0,len(self.src)):
-      cadena += self.name + '_src_lib.add_source_files("' + self.src[i] + '")' + '\n'
+      cadena += self.name + '_src_lib.add_source_files("' + self.src[i].replace("\\", "\\\\") + '")' + '\n'
     f.write(cadena)
     f.close()
 
@@ -281,7 +281,7 @@ class RunPy:
     cadena  = '\n#Add tb sources.\n'
     cadena += self.name + '_tb_lib = ui.add_library("tb_lib")\n'
     for i in range(0,len(self.tb)):
-      cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i] + '")' + '\n'
+      cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i].replace("\\", "\\\\") + '")' + '\n'
     f.write(cadena)
     f.close()
 
