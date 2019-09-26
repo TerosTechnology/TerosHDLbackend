@@ -138,7 +138,7 @@ class RunPy:
     f = open (self.filename, "a")
     cadena =  '\n#Check simulator.\n'
     cadena += 'print ("=============================================")\n'
-    cadena += 'simulator_class = SIMULATOR_FACTORY.select_simulator()\nsimname = simulator_class.name\nprint simname\n'
+    cadena += 'simulator_class = SIMULATOR_FACTORY.select_simulator()\nsimname = simulator_class.name\nprint (simname)\n'
     cadena += 'if (simname == "modelsim"):\n  f= open("modelsim.do","w+")\n  f.write("add wave * \\nlog -r /*\\nvcd file\\nvcd add -r /*\\n")\n  f.close()\n'
     cadena += 'print ("=============================================")\n'
     f.write(cadena)
