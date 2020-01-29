@@ -108,7 +108,7 @@ class RunPy:
 
   def setLibreriasPython(self):
     f = open (self.filename, "a")
-    cadena = "from os.path import join , dirname, abspath\nimport subprocess\nfrom vunit.ghdl_interface import GHDLInterface\nfrom vunit.simulator_factory import SIMULATOR_FACTORY\n"
+    cadena = "from os.path import join , dirname, abspath\nimport subprocess\nfrom vunit.sim_if.ghdl import GHDLInterface\nfrom vunit.sim_if.factory import SIMULATOR_FACTORY\n"
     f.write(cadena)
     f.close()
 
