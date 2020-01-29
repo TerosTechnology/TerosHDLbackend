@@ -23,7 +23,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='TerosHDL',
-    version='0.1.1',
+    version='0.1.2',
     author='Ismael Perez Rojo, Carlos Alberto Ruiz Naranjo',
     author_email='ismaelprojo@gmail.com, carlosruiznaranjo@gmail.com',
     description=('Teros HDL backend.'),
@@ -40,7 +40,7 @@ setup(
     include_package_data = True,
     install_requires=[
         'gitpython>2.1.0',
-        'vunit_hdl>=4.0.0'
+        'vunit_hdl>=4.3.0'
         ],
     classifiers=[
         'Development Status :: 3 - Alpha',
