@@ -63,7 +63,7 @@ class RunPy:
     if self.complex==True or self.poscheck==True:
       self.setPostCheck()
     self.separator()
-    self.setCheckCobertura()
+    # self.setCheckCobertura()
     self.setCheckSimulador()
     self.separator()
     # self.setParameter()
@@ -77,8 +77,6 @@ class RunPy:
       self.setLibreriasUVVM()
     if self.complex==True or self.uvvm==True:
       self.setExternalUVVM()
-    self.separator()
-    self.setAddArray()
     self.setSrc()
     self.setTb()
     #self.setExternalXilinx()
@@ -93,8 +91,10 @@ class RunPy:
       self.setAsocPosCheck()
     self.separator()
     self.setParametrosGHDL()
-    self.run()
+    self.separator()
     self.checkCobertura()
+    self.separator()
+    self.run()
 
   def setPath(self):
     if not os.path.exists(self.outPath):
@@ -109,12 +109,14 @@ class RunPy:
   def setLibreriasPython(self):
     f = open (self.filename, "a")
     cadena = "from os.path import join , dirname, abspath\nimport subprocess\nfrom vunit.sim_if.ghdl import GHDLInterface\nfrom vunit.sim_if.factory import SIMULATOR_FACTORY\n"
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setLibreriasPythonComplex(self):
     f = open (self.filename, "a")
     cadena = "import os\nimport sys\nimport numpy as np\n"
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
@@ -129,176 +131,199 @@ class RunPy:
 
   def setCheckCobertura(self):
     f = open (self.filename, "a")
-    cadena =  '\n#Check GHDL backend.\n'
+    cadena =  '#Check GHDL backend.\n'
     cadena += 'code_coverage=False\ntry:\n  if( GHDLInterface.determine_backend("")=="gcc" or  GHDLInterface.determine_backend("")=="GCC"):\n    code_coverage=True\n  else:\n    code_coverage=False\nexcept:\n  print("")\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setCheckSimulador(self):
     f = open (self.filename, "a")
-    cadena =  '\n#Check simulator.\n'
-    cadena += 'print ("=============================================")\n'
-    cadena += 'simulator_class = SIMULATOR_FACTORY.select_simulator()\nsimname = simulator_class.name\nprint (simname)\n'
-    cadena += 'if (simname == "modelsim"):\n  f= open("modelsim.do","w+")\n  f.write("add wave * \\nlog -r /*\\nvcd file\\nvcd add -r /*\\n")\n  f.close()\n'
-    cadena += 'print ("=============================================")\n'
+    cadena ='#Check simulator.\n'
+    cadena +='print ("=============================================")\n'
+    cadena +='simname = SIMULATOR_FACTORY.select_simulator().name\n'
+    cadena +='code_coverage = False\n'
+    cadena +='if (simname == "modelsim"):\n'
+    cadena +='    f= open("modelsim.do","w+")\n'
+    cadena +='    f.write("add wave * \\nlog -r /*\\nvcd file\\nvcd add -r /*\\n")\n'
+    cadena +='    f.close()\\n\n'
+    cadena +='code_coverage = (simname == "ghdl" and \\\n'
+    cadena +='                (GHDLInterface.determine_backend("")=="gcc" or  \\\n'
+    cadena +='                    GHDLInterface.determine_backend("")=="GCC"))\n'
+    cadena +='print ("Simulator = " + simname)\n'
+    cadena +='print ("=============================================")\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setPreCheck(self):
     f = open (self.filename, "a")
-    cadena =  '\n#pre_check func\n'
-    cadena += 'def make_pre_check():\n  """\n  Before test.\n  """'
+    cadena =  '#pre_config func\n'
+    cadena += 'def pre_config_func():\n    """\n    Before test.\n    """'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setPostCheck(self):
     f = open (self.filename, "a")
-    cadena =  '\n#post_check func\n'
-    cadena += 'def make_post_check():\n'
-    cadena += '  """                            \n'
-    cadena += '  After test.                    \n'
-    cadena += '  """                            \n'
-    cadena += '  def post_check(output_path):   \n'
-    cadena += '    check = True                 \n'
-    cadena += '    return check                 \n'
-    cadena += '  return post_check              \n'
+    cadena =  '#post_check func\n'
+    cadena += 'def post_check_func():\n'
+    cadena += '    """                            \n'
+    cadena += '    After test.                    \n'
+    cadena += '    """                            \n'
+    cadena += '    def post_check(output_path):   \n'
+    cadena += '        check = True                 \n'
+    cadena += '        return check                 \n'
+    cadena += '    return post_check              \n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setLibreriasUVVM(self):
     f = open (self.filename, "a")
-    cadena = '\n#UVVM libraries path.\n'
+    cadena = '#UVVM libraries path.\n'
     cadena += 'if (simname=="ghdl" or simname=="GHDL"):\n'
-    cadena += '  uvvm_util_root    = "'+self.uvvmGhdlPath+'/uvvm_util/v08"\n'
-    cadena += '  uvvm_axilite_root = "'+self.uvvmGhdlPath+'/bitvis_vip_axilite/v08"\n'
+    cadena += '    uvvm_util_root    = "'+self.uvvmGhdlPath+'/uvvm_util/v08"\n'
+    cadena += '    uvvm_axilite_root = "'+self.uvvmGhdlPath+'/bitvis_vip_axilite/v08"\n'
     cadena += 'elif (simname=="modelsim" or simname=="MODELSIM"):\n'
-    cadena += '  uvvm_util_root    = "'+self.uvvmModelsimPath+'/uvvm_util"\n'
-    cadena += '  uvvm_axilite_root = "'+self.uvvmModelsimPath+'/bitvis_vip_axilite"\n'
+    cadena += '    uvvm_util_root    = "'+self.uvvmModelsimPath+'/uvvm_util"\n'
+    cadena += '    uvvm_axilite_root = "'+self.uvvmModelsimPath+'/bitvis_vip_axilite"\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setVunitInstance(self):
     f = open (self.filename, "a")
-    cadena = '\n#VUnit instance.\n'
+    cadena = '#VUnit instance.\n'
     if self.complex==True:
       cadena += 'ui = VUnit.from_args(args=args)\n'
     else:
       cadena += 'ui = VUnit.from_argv()\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setVunitArgs(self):
       f = open (self.filename, "a")
-      cadena  = '\n#Add custom command line argument to standard CLI\n'
+      cadena  = '#Add custom command line argument to standard CLI\n'
       cadena += '#Beware of conflicts with existing arguments       \n'
       cadena += 'cli = VUnitCLI()                                   \n'
       cadena += "cli.parser.add_argument('--ide',required=False)    \n"
       cadena += 'args = cli.parse_args()                            \n'
       cadena += 'if (args.ide is None):                             \n'
-      cadena += '  print("IDE not selected. Default: Vivado")       \n'
-      cadena += '  ide="vivado"        \n'
+      cadena += '    print("IDE not selected. Default: Vivado")       \n'
+      cadena += '    ide="vivado"        \n'
       cadena += 'else:                                              \n'
-      cadena += '  ide=args.ide                                     \n'
+      cadena += '    ide=args.ide                                     \n'
+      cadena += '\n'
       f.write(cadena)
       f.close()
 
   def setLibreriasXilinx(self):
     f = open (self.filename, "a")
-    cadena  = '\n#Add Xilinx ISE libraries.                                       \n'
+    cadena  = '#Add Xilinx ISE libraries.                                       \n'
     cadena += 'if(ide=="ise"):                                                             \n'
-    cadena += '  print("IDE ISE selected")                                          \n'
-    cadena += '  xilinx_libraries_path = "'+self.xilibIseGhdlPath+'"             \n'
-    cadena += '  unisim_path   = join(xilinx_libraries_path,"unisim","v08")                \n'
-    cadena += '  corelib_path  = join(xilinx_libraries_path,"xilinxcorelib","v08")         \n'
-    cadena += '  unimacro_path = join(xilinx_libraries_path,"unimacro","v08")              \n'
-    cadena += '  ui.add_external_library("unisim",unisim_path)                             \n'
-    cadena += '  ui.add_external_library("xilinxcorelib",corelib_path)                     \n'
-    cadena += '  ui.add_external_library("unimacro",unimacro_path)                         \n'
+    cadena += '    print("IDE ISE selected")                                          \n'
+    cadena += '    xilinx_libraries_path = "'+self.xilibIseGhdlPath+'"             \n'
+    cadena += '    unisim_path   = join(xilinx_libraries_path,"unisim","v08")                \n'
+    cadena += '    corelib_path  = join(xilinx_libraries_path,"xilinxcorelib","v08")         \n'
+    cadena += '    unimacro_path = join(xilinx_libraries_path,"unimacro","v08")              \n'
+    cadena += '    ui.add_external_library("unisim",unisim_path)                             \n'
+    cadena += '    ui.add_external_library("xilinxcorelib",corelib_path)                     \n'
+    cadena += '    ui.add_external_library("unimacro",unimacro_path)                         \n'
     cadena += '                                                                            \n'
     cadena += '#Xilinx Vivado libraries.                                      \n'
     cadena += 'if(ide=="vivado"):                                                          \n'
-    cadena += '  print("IDE Vivado selected")                                          \n'
-    cadena += '  if(simname=="modelsim" or simname=="MODELSIM"):\n'
-    cadena += '    xilinx_libraries_path="'+self.xilibVivadoModelsimPath+'"\n'
-    cadena += '    unisim_path   = join(xilinx_libraries_path,"unisim")\n'
-    cadena += '    unifast_path  = join(xilinx_libraries_path,"unifast")\n'
-    cadena += '    unimacro_path = join(xilinx_libraries_path,"unimacro")\n'
-    cadena += '    secureip_path = join(xilinx_libraries_path,"secureip")\n'
-    cadena += '    xpm_path      = join(xilinx_libraries_path,"xpm")\n'
-    cadena += '    ui.add_external_library("xpm",xpm_path)                         \n'
-    cadena += '  else:\n'
-    cadena += '    xilinx_libraries_path = "'+self.xilibVivadoGhdlPath+'"\n'
-    cadena += '    unisim_path   = join(xilinx_libraries_path,"unisim","v08")\n'
-    cadena += '    unifast_path  = join(xilinx_libraries_path,"unifast","v08")\n'
-    cadena += '    unimacro_path = join(xilinx_libraries_path,"unimacro","v08")\n'
-    cadena += '    secureip_path = join(xilinx_libraries_path,"secureip","v08")            \n'
-    cadena += '  ui.add_external_library("unisim",unisim_path)                             \n'
-    cadena += '  ui.add_external_library("unifast",unifast_path)                           \n'
-    cadena += '  ui.add_external_library("unimacro",unimacro_path)                         \n'
-    cadena += '  ui.add_external_library("secureip",secureip_path)                         \n'
+    cadena += '    print("IDE Vivado selected")                                          \n'
+    cadena += '    if(simname=="modelsim" or simname=="MODELSIM"):\n'
+    cadena += '        xilinx_libraries_path="'+self.xilibVivadoModelsimPath+'"\n'
+    cadena += '        unisim_path   = join(xilinx_libraries_path,"unisim")\n'
+    cadena += '        unifast_path  = join(xilinx_libraries_path,"unifast")\n'
+    cadena += '        unimacro_path = join(xilinx_libraries_path,"unimacro")\n'
+    cadena += '        secureip_path = join(xilinx_libraries_path,"secureip")\n'
+    cadena += '        xpm_path      = join(xilinx_libraries_path,"xpm")\n'
+    cadena += '        ui.add_external_library("xpm",xpm_path)                         \n'
+    cadena += '    else:\n'
+    cadena += '        xilinx_libraries_path = "'+self.xilibVivadoGhdlPath+'"\n'
+    cadena += '        unisim_path   = join(xilinx_libraries_path,"unisim","v08")\n'
+    cadena += '        unifast_path  = join(xilinx_libraries_path,"unifast","v08")\n'
+    cadena += '        unimacro_path = join(xilinx_libraries_path,"unimacro","v08")\n'
+    cadena += '        secureip_path = join(xilinx_libraries_path,"secureip","v08")            \n'
+    cadena += '    ui.add_external_library("unisim",unisim_path)                             \n'
+    cadena += '    ui.add_external_library("unifast",unifast_path)                           \n'
+    cadena += '    ui.add_external_library("unimacro",unimacro_path)                         \n'
+    cadena += '    ui.add_external_library("secureip",secureip_path)                         \n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setParameter(self):
     f = open(self.filename, "a")
-    cadena  = '\n#Add custom command line argument to standard CLI\n'
+    cadena  = '#Add custom command line argument to standard CLI\n'
     cadena += '#Beware of conflicts with existing arguments       \n'
     cadena += 'cli = VUnitCLI()                                   \n'
     cadena += "cli.parser.add_argument('--ide')                   \n"
     cadena += 'args = cli.parse_args()                            \n'
     cadena += 'if (args.ide is None):                             \n'
-    cadena += '  print("Wrong IDE")                               \n'
+    cadena += '    print("Wrong IDE")                               \n'
     cadena += 'else:                                              \n'
-    cadena += '  ide=args.ide                                     \n'
+    cadena += '    ide=args.ide                                     \n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setCreateVunit(self):
     f = open(self.filename, "a")
-    cadena  = '\n#New VUnit instance.\n'
+    cadena  = '#New VUnit instance.\n'
     cadena += 'ui = VUnit.from_args(args=args)\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setAddArray(self):
     f = open(self.filename, "a")
-    cadena  = '\n#Add array pkg.\n'
+    cadena  = '#Add array pkg.\n'
     cadena += 'ui.add_array_util()\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setSrc(self):
     f = open (self.filename, "a")
-    cadena  = '\n#Add module sources.\n'
+    cadena  = '#Add module sources.\n'
     cadena += self.name + '_src_lib = ui.add_library("src_lib")\n'
     for i in range(0,len(self.src)):
       cadena += self.name + '_src_lib.add_source_files("' + self.src[i].replace("\\", "\\\\") + '")' + '\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setTb(self):
     f = open (self.filename, "a")
-    cadena  = '\n#Add tb sources.\n'
+    cadena  = '#Add tb sources.\n'
     cadena += self.name + '_tb_lib = ui.add_library("tb_lib")\n'
     for i in range(0,len(self.tb)):
       cadena += self.name + '_tb_lib.add_source_files("' + self.tb[i].replace("\\", "\\\\") + '")' + '\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setExternalUVVM(self):
     f = open (self.filename, "a")
-    cadena  = '\n#Add UVVM libraries.\n'
+    cadena  = '#Add UVVM libraries.\n'
     cadena += 'ui.add_external_library("uvvm_util",uvvm_util_root)\n'
     cadena += 'ui.add_external_library("bitvis_vip_axilite",uvvm_axilite_root)\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setExternalXilinx(self):
     f = open (self.filename, "a")
-    cadena  = '\n#Add Xilinx libraries.\n'
+    cadena  = '#Add Xilinx libraries.\n'
     cadena += 'ui.add_external_library("unisim",unisim_path)\n'
     cadena += 'ui.add_external_library("xilinxcorelib",corelib_path)\n'
     cadena += 'ui.add_external_library("unimacro",unimacro_path)\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
@@ -314,19 +339,19 @@ class RunPy:
     else:
       synopsys_var=' '
       synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
-    cadena  = '\n#GHDL parameters.\n'
+    cadena  = '#GHDL parameters.\n'
     cadena += 'if(code_coverage==True):\n'
-    cadena += '  ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
-    cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
-    cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+'"-Wl,-lgcov"'+psl_var+'])\n'
-    cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
+    cadena += '    ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '    ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
+    cadena += '    ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+'"-Wl,-lgcov"'+psl_var+'])\n'
+    cadena += '    ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n'
 
     cadena += 'else:\n'
     if self.synopsysLibraries==True or self.pslSupport==True:
-      cadena += '  ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
-      cadena += '  ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
-      cadena += '  ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
-    cadena += '  ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n\n'
+      cadena += '    ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
+      cadena += '    ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , ['+synopsys_var_opt+''+psl_var+'])\n'
+      cadena += '    ui.set_sim_option("ghdl.elab_flags"      , ["-fexplicit","--no-vital-checks","-frelaxed-rules"])\n'
+    cadena += '    ui.set_sim_option("modelsim.init_files.after_load" ,["modelsim.do"])\n\n'
 
     if self.complex==True:
       cadena += 'ui.set_sim_option("ghdl.sim_flags"        ,["--read-wave-opt=./filter.teros"])\n'
@@ -334,103 +359,100 @@ class RunPy:
       cadena += 'ui.set_sim_option("disable_ieee_warnings", True)\n'
     if self.pslSupport==True:
       cadena += 'ui.set_sim_option("ghdl.sim_flags", ["--psl-report=./psl_coverage.json"])\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setAsociacionChecks(self):
     f = open (self.filename, "a")
-    cadena  = '\n#func relations\n'
+    cadena  = '#func relations\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  print(test.name)\n'
+    cadena += '    print(test.name)\n'
 
     cadena += 'for test in tb_generated.get_tests():\n'
-    cadena += '  if test.name == "'+self.name+'_test":\n'
-    cadena += '    num_test = 5 \n'
-    cadena += '    for i in range (0,num_test):\n'
-    cadena += '      test.add_config(name="'+self.name+'_"+str(i), generics=dict(num_test=i,parameter_generic=parameter),pre_config=make_pre_check(i,parameter),post_check=make_post_check(i))\n'
-    cadena += '  else:\n'
-    cadena += '    pass\n'
+    cadena += '    if test.name == "'+self.name+'_test":\n'
+    cadena += '      num_test = 5 \n'
+    cadena += '      for i in range (0,num_test):\n'
+    cadena += '        test.add_config(name="'+self.name+'_"+str(i), generics=dict(num_test=i,parameter_generic=parameter),pre_config=pre_config_func(i,parameter),post_check=post_check_func(i))\n'
+    cadena += '    else:\n'
+    cadena += '      pass\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setAsocPreCheck(self):
     f = open (self.filename, "a")
-    cadena  = '\n#func precheck\n'
+    cadena  = '#func precheck\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     # cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  if test.name == "'+self.name+'_test":\n'
     # cadena += '    for i in range (0,num_test):\n'
-    cadena += '  test.add_config(name="'+self.name+'", pre_config=make_pre_check())\n'
+    cadena += '  test.add_config(name="'+self.name+'", pre_config=pre_config_func())\n'
     # cadena += '  else:\n'
     # cadena += '    pass\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setAsocPosCheck(self):
     f = open (self.filename, "a")
-    cadena  = '\n#func poscheck\n'
+    cadena  = '#func poscheck\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     # cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  if test.name == "'+self.name+'_test":\n'
     # cadena += '    for i in range (0,num_test):\n'
-    cadena += '  test.add_config(name="'+self.name+'", post_check=make_post_check())\n'
+    cadena += '    test.add_config(name="'+self.name+'", post_check=post_check_func())\n'
     # cadena += '  else:\n'
     # cadena += '    pass\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def setAsocPrePosCheck(self):
     f = open (self.filename, "a")
-    cadena  = '\n#func checks\n'
+    cadena  = '#func checks\n'
     cadena += 'tb_generated = '+self.name+'_tb_lib.entity("'+self.tb[0].split(".")[0]+'")\n'
     # cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  print(test.name)\n'
     cadena += 'for test in tb_generated.get_tests():\n'
     # cadena += '  if test.name == "'+self.name+'_test":\n'
     # cadena += '    for i in range (0,num_test):\n'
-    cadena += '  test.add_config(name="'+self.name+'", pre_config=make_pre_check(),post_check=make_post_check())\n'
+    cadena += '    test.add_config(name="'+self.name+'", pre_config=pre_config_func(),post_check=post_check_func())\n'
     # cadena += '  else:\n'
     # cadena += '    pass\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def run(self):
     f = open (self.filename, "a")
-    cadena = '\n#Run tests.\n'
-    cadena += 'try:\n'
-    cadena += '  ui.main()\n'
-    cadena += 'except SystemExit as exc:\n'
-    cadena += '  all_ok = exc.code == 0\n'
+    cadena = '#Run tests.\n'
+    cadena += 'ui.main(post_run=post_run_fcn)'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def checkCobertura(self):
     f = open (self.filename, "a")
-    cadena = '\n#Code coverage.\n'
-    cadena += 'if all_ok:\n'
-    cadena += '  if(code_coverage==True):\n'
+    cadena = 'def post_run_fcn(results):\n'
+    cadena += '    if(code_coverage==True ):\n'
     for i in range(0,len(self.src)):
-      cadena += '    subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
-    cadena += '    subprocess.call(["genhtml"'
-    for i in range(0,len(self.src)):
-      cadena += ',"code_' + str(i)+ '.info"'
-    cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
-    cadena += '  else:\n'
-    cadena += '    exit(0)\n'
-    cadena += 'else:\n'
-    cadena += '  exit(1)\n'
+        cadena += '    subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
+        cadena += '    subprocess.call(["genhtml"'
+        for i in range(0,len(self.src)):
+            cadena += ',"code_' + str(i)+ '.info"'
+            cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
   def separator(self):
     f = open (self.filename, "a")
-    cadena  = '\n##############################################################################\n'
-    cadena += '##############################################################################\n'
-    cadena += '##############################################################################\n'
+    cadena  = '################################################################################\n'
     f.write(cadena)
     f.close()
