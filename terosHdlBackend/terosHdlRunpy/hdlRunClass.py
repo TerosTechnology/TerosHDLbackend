@@ -109,7 +109,6 @@ class RunPy:
   def setLibreriasPython(self):
     f = open (self.filename, "a")
     cadena = "from os.path import join , dirname, abspath\nimport subprocess\nfrom vunit.sim_if.ghdl import GHDLInterface\nfrom vunit.sim_if.factory import SIMULATOR_FACTORY\n"
-    cadena += '\n'
     f.write(cadena)
     f.close()
 
@@ -126,6 +125,7 @@ class RunPy:
         cadena = "from vunit   import VUnit, VUnitCLI\n"
     if self.lang=="verilog":
         cadena = "from vunit.verilog   import VUnit, VUnitCLI\n"
+    cadena += '\n'
     f.write(cadena)
     f.close()
 
@@ -146,7 +146,7 @@ class RunPy:
     cadena +='if (simname == "modelsim"):\n'
     cadena +='    f= open("modelsim.do","w+")\n'
     cadena +='    f.write("add wave * \\nlog -r /*\\nvcd file\\nvcd add -r /*\\n")\n'
-    cadena +='    f.close()\\n\n'
+    cadena +='    f.close()\n'
     cadena +='code_coverage = (simname == "ghdl" and \\\n'
     cadena +='                (GHDLInterface.determine_backend("")=="gcc" or  \\\n'
     cadena +='                    GHDLInterface.determine_backend("")=="GCC"))\n'
@@ -340,7 +340,7 @@ class RunPy:
       synopsys_var=' '
       synopsys_var_opt='"-fexplicit","--no-vital-checks","-frelaxed-rules"'
     cadena  = '#GHDL parameters.\n'
-    cadena += 'if(code_coverage==True):\n'
+    cadena += 'if(code_coverage == True):\n'
     cadena += '    ' + self.name + '_src_lib.add_compile_option   ("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
     cadena += '    ' + self.name + '_tb_lib.add_compile_option("ghdl.flags"     , [ '+synopsys_var+'"-fprofile-arcs","-ftest-coverage"'+psl_var+'])\n'
     cadena += '    ui.set_sim_option("ghdl.elab_flags"      , ['+synopsys_var+'"-Wl,-lgcov"'+psl_var+'])\n'
@@ -440,10 +440,10 @@ class RunPy:
   def checkCobertura(self):
     f = open (self.filename, "a")
     cadena = 'def post_run_fcn(results):\n'
-    cadena += '    if(code_coverage==True ):\n'
+    cadena += '    if(code_coverage == True ):\n'
     for i in range(0,len(self.src)):
-        cadena += '    subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
-        cadena += '    subprocess.call(["genhtml"'
+        cadena += '        subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
+        cadena += '        subprocess.call(["genhtml"'
         for i in range(0,len(self.src)):
             cadena += ',"code_' + str(i)+ '.info"'
             cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
