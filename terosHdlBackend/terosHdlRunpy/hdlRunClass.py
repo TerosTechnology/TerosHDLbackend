@@ -108,7 +108,13 @@ class RunPy:
 
   def setLibreriasPython(self):
     f = open (self.filename, "a")
-    cadena = "from os.path import join , dirname, abspath\nimport subprocess\nfrom vunit.sim_if.ghdl import GHDLInterface\nfrom vunit.sim_if.factory import SIMULATOR_FACTORY\n"
+    cadena = "from pathlib import Path\nfrom os.path import join , dirname, abspath\nimport subprocess\nfrom vunit.sim_if.ghdl import GHDLInterface\nfrom vunit.sim_if.factory import SIMULATOR_FACTORY\n"
+    for i in range(0,len(self.src)):
+        filename, file_extension = os.path.splitext(self.src[i])
+        if (file_extension == ".xpr"):
+            cadena += "from vunit.vivado.vivado_util import add_vivado_ip\n"
+            break
+
     f.write(cadena)
     f.close()
 
@@ -291,9 +297,18 @@ class RunPy:
   def setSrc(self):
     f = open (self.filename, "a")
     cadena  = '#Add module sources.\n'
+    cadena  = 'ROOT = str(Path(__file__).parent.absolute())\n'
     cadena += self.name + '_src_lib = ui.add_library("src_lib")\n'
     for i in range(0,len(self.src)):
-      cadena += self.name + '_src_lib.add_source_files("' + self.src[i].replace("\\", "\\\\") + '")' + '\n'
+        filename, file_extension = os.path.splitext(self.src[i])
+        if (file_extension == ".xpr"):
+            cadena += 'add_vivado_ip(\n'
+            cadena += '    ui,\n'
+            cadena += '    output_path = ROOT + "/vivado_libs",\n'
+            cadena += '    project_file= "./' + self.src[i] + '"\n'
+            cadena += ')\n'
+        else:
+            cadena += self.name + '_src_lib.add_source_files("' + self.src[i].replace("\\", "\\\\") + '")' + '\n'
     cadena += '\n'
     f.write(cadena)
     f.close()
@@ -442,11 +457,15 @@ class RunPy:
     cadena = 'def post_run_fcn(results):\n'
     cadena += '    if(code_coverage == True ):\n'
     for i in range(0,len(self.src)):
-        cadena += '        subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
-        cadena += '        subprocess.call(["genhtml"'
-        for i in range(0,len(self.src)):
+        filename, file_extension = os.path.splitext(self.src[i])
+        if (file_extension != ".xpr"):
+            cadena += '        subprocess.call(["lcov", "--capture", "--directory", "' + os.path.splitext(os.path.basename(self.src[i]))[0] + '.gcda", "--output-file",  "code_' + str(i)+ '.info" ])\n'
+    cadena += '        subprocess.call(["genhtml"'
+    for i in range(0,len(self.src)):
+        filename, file_extension = os.path.splitext(self.src[i])
+        if (file_extension != ".xpr"):
             cadena += ',"code_' + str(i)+ '.info"'
-            cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
+    cadena += ',"--output-directory", "'+self.coverageReport+'"])\n'
     cadena += '\n'
     f.write(cadena)
     f.close()
