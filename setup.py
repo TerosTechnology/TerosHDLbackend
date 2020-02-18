@@ -40,7 +40,7 @@ setup(
     include_package_data = True,
     install_requires=[
         'gitpython>2.1.0',
-        'vunit_hdl>=4.2.0'
+        'vunit_hdl>=4.2.0*'
         ],
     classifiers=[
         'Development Status :: 3 - Alpha',
