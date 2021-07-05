@@ -1,51 +1,40 @@
-# Copyright 2019
-#
-# Ismael Perez Rojo (ismaelprojo@gmail.com)
-# Carlos Alberto Ruiz Naranjo (carlosruiznaranjo@gmail.com)
-#
-# This file is part of TerosHDL.
-#
-# TerosHDL is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# TerosHDL is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with TerosHDL.  If not, see <https://www.gnu.org/licenses/>.
+from os import path
 
+from setuptools import setup
 
-from setuptools import find_packages, setup
+here = path.abspath(path.dirname(__file__))
+
+# Get the long description from the README file
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
-    name='TerosHDL',
-    version='0.1.1',
-    author='Ismael Perez Rojo, Carlos Alberto Ruiz Naranjo',
-    author_email='ismaelprojo@gmail.com, carlosruiznaranjo@gmail.com',
-    description=('Teros HDL backend.'),
-    url = 'https://github.com/TerosTechnology/terosHDLbackend',
-    download_url = 'https://github.com/TerosTechnology/terosHDLbackend/tarball/0.1',
-    keywords='fpga hdl vhdl ise vivado vunit verilog ghdl',
-    packages=find_packages(),
-    entry_points = {
-        'console_scripts': [
-          'terosHdlRepo   = terosHdlBackend.terosHdlRepo.terosHdlRepo:main',
-          'terosHdlRunpy  = terosHdlBackend.terosHdlRunpy.terosHdlRun:main'
-        ]
-    },
-    include_package_data = True,
-    install_requires=[
-        'gitpython>2.1.0',
-        'vunit_hdl>=4.0.0'
-        ],
+    name='pyteroshdl',
+    version='0.0.2',
+    description='It groups python dependencies for TerosHDL.',
+    long_description=long_description,
+    url='https://terostechnology.github.io/terosHDLdoc/',
+    author='Teros Technology',
+    author_email='terostechnology@gmail.com',
+    license='GNU General Public License (GPL)',
     classifiers=[
+        # How mature is this project? Common values are
+        #   3 - Alpha
+        #   4 - Beta
+        #   5 - Production/Stable
         'Development Status :: 3 - Alpha',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Programming Language :: Python :: 2.7',
-        'Topic :: Utilities'
-    ]
+
+        # Specify the Python versions you support here. In particular, ensure
+        # that you indicate whether you support Python 2, Python 3 or both.
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+    ],
+    keywords='teros fpga',
+
+    python_requires=">=3.0",
+
+    install_requires=[
+        "vunit_hdl >= 4.4.1",
+        "edalize >= 0.2.5"
+    ],
 )
