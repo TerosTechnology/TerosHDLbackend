@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='pyteroshdl',
-    version='0.0.2',
+    version='2.0.0',
     description='It groups python dependencies for TerosHDL.',
     long_description=long_description,
     url='https://terostechnology.github.io/terosHDLdoc/',
