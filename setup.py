@@ -13,7 +13,7 @@ setup(
     version='2.0.0',
     description='It groups python dependencies for TerosHDL.',
     long_description=long_description,
-    url='https://terostechnology.github.io/terosHDLdoc/',
+    url='https://terostechnology.github.io',
     author='Teros Technology',
     author_email='terostechnology@gmail.com',
     license='GNU General Public License (GPL)',
