@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='pyteroshdl',
+    name='teroshdl',
     version='2.0.0',
     description='It groups python dependencies for TerosHDL.',
     long_description=long_description,
