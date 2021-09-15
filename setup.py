@@ -34,7 +34,7 @@ setup(
     python_requires=">=3.0",
 
     install_requires=[
-        "yowasp-yosys >= 0.8",
+        "yowasp-yosys >= 0.8.*",
         "vunit_hdl >= 4.4.1",
         "edalize >= 0.2.5"
     ],
