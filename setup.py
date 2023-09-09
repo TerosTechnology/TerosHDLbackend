@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='teroshdl',
-    version='2.1.2',
+    version='3.0.0',
     description='It groups python dependencies for TerosHDL.',
     long_description=long_description,
     url='https://terostechnology.github.io',
@@ -34,7 +34,7 @@ setup(
     python_requires=">=3.0",
 
     install_requires=[
-        "yowasp-yosys >= 0.8.*",
+        "yowasp-yosys",
         "vunit_hdl >= 4.4.1",
         "edalize >= 0.2.5",
         "vsg >= 3.3.0"
